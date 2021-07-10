@@ -11,7 +11,7 @@ class ReactS3Client {
     constructor(config: IConfig) {
       this.config = config;
     }
-    public async uploadFile(file: File, newFileName?: string): Promise<UploadResponse> {
+    public async uploadFile(file: File, newFileName?: string) {
       throwError(this.config, file);
 
       const fd = new FormData();
@@ -37,13 +37,13 @@ class ReactS3Client {
       );
       fd.append("file", file);
 
-      const data = await fetch(url, { method: "post", body: fd });
-      if (!data.ok) return Promise.reject(data);
       return Promise.resolve({
+        fd,
+        url,
         bucket: this.config.bucketName,
         key: `${this.config.dirName ? this.config.dirName + "/" : ""}${fileName}`,
         location: `${url}/${this.config.dirName ? this.config.dirName + "/" : ""}${fileName}`,
-        status: data.status
+        // status: data.status
       });
     }
     public async deleteFile(fileName: string): Promise<DeleteResponse> {
